@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.clebersonfalk.springbootmodeloconceitual.domain.Categoria;
 import com.clebersonfalk.springbootmodeloconceitual.domain.Cidade;
+import com.clebersonfalk.springbootmodeloconceitual.domain.Cliente;
+import com.clebersonfalk.springbootmodeloconceitual.domain.Endereco;
 import com.clebersonfalk.springbootmodeloconceitual.domain.Estado;
 import com.clebersonfalk.springbootmodeloconceitual.domain.Produto;
+import com.clebersonfalk.springbootmodeloconceitual.domain.enums.TipoCliente;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.CategoriaRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.CidadeRepository;
+import com.clebersonfalk.springbootmodeloconceitual.repositories.ClienteRepository;
+import com.clebersonfalk.springbootmodeloconceitual.repositories.EnderecoRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.EstadoRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.ProdutoRepository;
 
@@ -30,6 +35,12 @@ public class SpringBootModeloConceitualApplication implements CommandLineRunner 
 	
 	@Autowired
 	private CidadeRepository cidadeRepository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootModeloConceitualApplication.class, args);
@@ -68,5 +79,17 @@ public class SpringBootModeloConceitualApplication implements CommandLineRunner 
 		
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRepository.saveAll(Arrays.asList(cid1, cid2, cid3));
+		
+		Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "89787987987", TipoCliente.PESSOAFISICA);
+		
+		cli1.getTelefones().addAll(Arrays.asList("1232123132", "5564564565"));
+		
+		Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto. 303", "Jardim", "86065-360", cli1, cid1);
+		Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "86065-532", cli1, cid2);
+		
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		
+		clienteRepository.saveAll(Arrays.asList(cli1));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2));
 	}
 }
