@@ -8,8 +8,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.clebersonfalk.springbootmodeloconceitual.domain.Categoria;
+import com.clebersonfalk.springbootmodeloconceitual.domain.Cidade;
+import com.clebersonfalk.springbootmodeloconceitual.domain.Estado;
 import com.clebersonfalk.springbootmodeloconceitual.domain.Produto;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.CategoriaRepository;
+import com.clebersonfalk.springbootmodeloconceitual.repositories.CidadeRepository;
+import com.clebersonfalk.springbootmodeloconceitual.repositories.EstadoRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -20,6 +24,12 @@ public class SpringBootModeloConceitualApplication implements CommandLineRunner 
 	
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private EstadoRepository estadoRepository;
+	
+	@Autowired
+	private CidadeRepository cidadeRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootModeloConceitualApplication.class, args);
@@ -42,8 +52,21 @@ public class SpringBootModeloConceitualApplication implements CommandLineRunner 
 		p1.getCategorias().addAll(Arrays.asList(cat1));
 		p2.getCategorias().addAll(Arrays.asList(cat1, cat2));
 		p3.getCategorias().addAll(Arrays.asList(cat1));
-		
+				
 		categoriaRepository.saveAll(Arrays.asList(cat1, cat2, cat3));
 		produtoRepository.saveAll(Arrays.asList(p1, p2, p3));
+		
+		Estado est1 = new Estado(null, "Minas Gerais");
+		Estado est2 = new Estado(null, "São Paulo");
+		
+		Cidade cid1 = new Cidade(null, "Uberlândia", est1);
+		Cidade cid2 = new Cidade(null, "São Paulo", est2);
+		Cidade cid3 = new Cidade(null, "Campinas", est2);
+		
+		est1.getCidades().addAll(Arrays.asList(cid1));
+		est2.getCidades().addAll(Arrays.asList(cid2, cid3));
+		
+		estadoRepository.saveAll(Arrays.asList(est1, est2));
+		cidadeRepository.saveAll(Arrays.asList(cid1, cid2, cid3));
 	}
 }
