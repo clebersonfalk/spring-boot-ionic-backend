@@ -1,5 +1,6 @@
 package com.clebersonfalk.springbootmodeloconceitual;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,20 @@ import com.clebersonfalk.springbootmodeloconceitual.domain.Cidade;
 import com.clebersonfalk.springbootmodeloconceitual.domain.Cliente;
 import com.clebersonfalk.springbootmodeloconceitual.domain.Endereco;
 import com.clebersonfalk.springbootmodeloconceitual.domain.Estado;
+import com.clebersonfalk.springbootmodeloconceitual.domain.Pagamento;
+import com.clebersonfalk.springbootmodeloconceitual.domain.PagamentoComBoleto;
+import com.clebersonfalk.springbootmodeloconceitual.domain.PagamentoComCartao;
+import com.clebersonfalk.springbootmodeloconceitual.domain.Pedido;
 import com.clebersonfalk.springbootmodeloconceitual.domain.Produto;
+import com.clebersonfalk.springbootmodeloconceitual.domain.enums.EstadoPagamento;
 import com.clebersonfalk.springbootmodeloconceitual.domain.enums.TipoCliente;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.CategoriaRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.CidadeRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.ClienteRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.EnderecoRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.EstadoRepository;
+import com.clebersonfalk.springbootmodeloconceitual.repositories.PagamentoRepository;
+import com.clebersonfalk.springbootmodeloconceitual.repositories.PedidoRepository;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -41,6 +49,12 @@ public class SpringBootModeloConceitualApplication implements CommandLineRunner 
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootModeloConceitualApplication.class, args);
@@ -91,5 +105,21 @@ public class SpringBootModeloConceitualApplication implements CommandLineRunner 
 		
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		enderecoRepository.saveAll(Arrays.asList(e1, e2));
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		
+		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
+		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 10:32"), cli1, e2);
+		
+		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pagto1);
+		
+		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDETE, ped2, sdf.parse("20/10/2017 00:00"), null);
+		ped2.setPagamento(pagto2);
+		
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+		
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pagto1, pagto2));
 	}
 }
