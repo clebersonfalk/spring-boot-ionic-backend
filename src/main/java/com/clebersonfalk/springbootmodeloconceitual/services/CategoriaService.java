@@ -3,10 +3,12 @@ package com.clebersonfalk.springbootmodeloconceitual.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.clebersonfalk.springbootmodeloconceitual.domain.Categoria;
 import com.clebersonfalk.springbootmodeloconceitual.repositories.CategoriaRepository;
+import com.clebersonfalk.springbootmodeloconceitual.services.exceptions.DataIntegrityException;
 import com.clebersonfalk.springbootmodeloconceitual.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -30,5 +32,14 @@ public class CategoriaService {
 	public Categoria update(Categoria obj) {
 		find(obj.getId());
 		return repo.save(obj);
+	}
+	
+	public void delete(Integer id) {
+		find(id);
+		try {
+			repo.deleteById(id);	
+		} catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível excluir uma categoria que possui produtos");
+		}
 	}
 }
